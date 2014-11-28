@@ -285,6 +285,7 @@ class SLR1Checker:
     def _first(self):
         """Compute the FIRST of all grammar symbols"""
         # first(x) = x if x is a terminal symbol grammar
+        
         for symbol in range(self._n_nt_symbols, len(self._symbols)):
             self._firstset[symbol] = [symbol]
 
@@ -305,6 +306,7 @@ class SLR1Checker:
         for first in self._firstset:
             assert len(self._firstset.get(first)) > 0, "Empty first " \
                     + self._symbols[first]
+
 
 
     def get_string_rules(self, rules, nset):

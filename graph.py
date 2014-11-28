@@ -1,6 +1,7 @@
 import sys, getopt
 import check
 
+
 PYDOT = True
 try:
     import pydot
@@ -55,18 +56,32 @@ class SLR1Graph:
                 self._nodes[labeled_connection[1]],
                 label=labeled_connection[2]))
         graph.write(name + ".png", format="png")
-        print "Image generated as", name + ".png"
+        #print "Image generated as", name + ".png"
 
 
     def print_graph(self):
+    
+    	output_file = open('closure.txt', 'w+')
+        length_items = str(len(self._itemsets))
+        output_file.write(length_items+"\n")
+        
         """If the grammar is SLR(1), print the parser states graph"""
         for pos, itemset in enumerate(self._itemsets):
-            print self._checker.get_string_rules(itemset, pos)
-            print "Connected to (GOTO, itemset):"
+            a = self._checker.get_string_rules(itemset, pos)
+            #print a
+            output_file.write(a)
+            #print "Connected to (GOTO, itemset):"
             for labeled_connection in self._labeled_connections:
                 if labeled_connection[0] == pos:
-                    print labeled_connection[2], ",", str(labeled_connection[1])
-            print "\n" + "-"*80 + "\n"
+                     b = str(labeled_connection[2] + "," + str(labeled_connection[1]) + "\n") 
+                     #print b
+                     output_file.write(b)
+            output_file.write("\n\n")     
+            #print "\n" + "-"*80 + "\n"
+            
+            
+        
+            
 
 def main():
     """Main"""
@@ -74,12 +89,15 @@ def main():
     out = 'graph'
     mode = None # default 'plot'
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hps:o:",
+        opts, args = getopt.getopt("slr.txt", "hps:o:",
                 ["help", "separator=", "print", "out="])
     except getopt.GetoptError as err:
         print "ERROR:", err
         usage()
         sys.exit(2)
+        
+    args = []
+    args.append("slr.txt")    
     for opt, arg in opts:
         if opt in ("-h", "--help"):
             usage()
@@ -96,13 +114,12 @@ def main():
         with open(filex, 'r') as fpt:
             gen = SLR1Graph(fpt.readlines(), separator)
             if mode is None:
-                if True:
-                    print "Unable to generate image, printing instead"
-                    gen.print_graph()
-                else:
-                    gen.plot_graph(out)
-            else:
+                #print "Unable to generate image, printing instead"
                 gen.print_graph()
+                gen.plot_graph(out)
+            #else:
+                #gen.print_graph()
+            
 
 def usage():
     """Help message"""
